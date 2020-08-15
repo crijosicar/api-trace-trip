@@ -8,7 +8,7 @@ module.exports = {
       instances: 1,
       autorestart: true,
       watch: true,
-      max_memory_restart: '200M',
+      max_memory_restart: '500M',
       log_date_format: 'YYYY-MM-DD HH:mm Z',
       interpreter: '/home/csierra/.nvm/versions/node/v12.18.1/bin/node',
       env: {
@@ -29,7 +29,7 @@ module.exports = {
       repo: 'git@github.com/api-trace-trip.git',
       path: '/var/www/api-trace-trip',
       'post-deploy':
-        'npm install && rimraf dist && nest build && pm2 reload ecosystem.config.js --env stating',
+        'npm install --unsafe-perm && rimraf dist && nest build && pm2 reload ecosystem.config.js --env stating',
     },
   },
 };
