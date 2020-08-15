@@ -36,7 +36,7 @@ import { hash } from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordUserDto } from './dto/update-password-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { storage } from 'src/shared/multer.config';
+import { storage } from 'src/shared/cloudinary.config';
 
 @ApiTags('users')
 @Controller('users')
@@ -151,11 +151,7 @@ export class UsersController {
     description: 'The record has been successfully updated.',
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
-  @UseInterceptors(
-    FileInterceptor('avatar', {
-      storage,
-    }),
-  )
+  @UseInterceptors(FileInterceptor('avatar', { storage }))
   async updateAvatar(
     @Param('id') id: string,
     @UploadedFile() file: { [index: string]: any },

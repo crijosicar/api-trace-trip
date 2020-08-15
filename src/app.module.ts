@@ -8,9 +8,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PagesModule } from './pages/pages.module';
 import { connectionConfiguration } from './shared/mongosee.config';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { v2 as cloudinary } from 'cloudinary';
-import { MulterModule } from '@nestjs/platform-express';
 
 const {
   DATABASE_CONNECTION,
@@ -23,14 +21,6 @@ cloudinary.config({
   cloud_name: CLOUDINARY_CLOUD_NAME,
   api_key: CLOUDINARY_API_KEY,
   api_secret: CLOUDINARY_API_SECRET,
-});
-
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: 'assets',
-    format: async (): Promise<string> => 'png',
-  },
 });
 
 @Module({
@@ -59,7 +49,6 @@ const storage = new CloudinaryStorage({
     MongooseModule.forRoot(DATABASE_CONNECTION, connectionConfiguration),
     UsersModule,
     PagesModule,
-    MulterModule.register({ storage }),
   ],
 })
 export class AppModule {}
