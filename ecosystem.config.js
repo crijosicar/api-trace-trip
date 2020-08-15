@@ -13,11 +13,11 @@ module.exports = {
       interpreter: '/home/csierra/.nvm/versions/node/v12.18.1/bin/node',
       env: {
         NODE_ENV: 'development',
-        PORT: 3001,
+        PORT: 3000,
       },
       env_stating: {
         NODE_ENV: 'production',
-        PORT: 3001,
+        PORT: 3000,
       },
     },
   ],
