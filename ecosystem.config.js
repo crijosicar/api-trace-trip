@@ -7,8 +7,8 @@ module.exports = {
       cwd: '/var/www/api-trace-trip/',
       instances: 1,
       autorestart: true,
-      watch: true,
-      max_memory_restart: '500M',
+      watch: false,
+      max_memory_restart: '1G',
       log_date_format: 'YYYY-MM-DD HH:mm Z',
       interpreter: '/home/csierra/.nvm/versions/node/v12.18.1/bin/node',
       env: {
