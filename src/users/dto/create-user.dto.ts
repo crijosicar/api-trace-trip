@@ -1,19 +1,36 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserStatuses } from '../model/user.schema';
 
 export class CreateUserDto {
-  @ApiProperty()
+  @ApiPropertyOptional({
+    description: 'FirstName of the user',
+    type: String,
+  })
   firstName?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional({
+    description: 'LasstName of the user',
+    type: String,
+  })
   lastName?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Email of the user',
+    required: true,
+    type: String,
+  })
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Password of the user',
+    required: true,
+    type: String,
+  })
   password: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional({
+    description: 'Status of the user',
+    enum: Object.keys(UserStatuses),
+  })
   status?: UserStatuses.active;
 }
