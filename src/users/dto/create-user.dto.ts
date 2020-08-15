@@ -34,3 +34,11 @@ export class CreateUserDto {
   })
   status?: UserStatuses.active;
 }
+
+export class AdditionalUserData {
+  @ApiProperty({
+    description: 'URL Avatar for user ',
+    type: String,
+  })
+  avatar: string;
+}

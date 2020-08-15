@@ -24,6 +24,7 @@ async function bootstrap() {
   app.use(compression());
 
   const options = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('Traze Trip')
     .setDescription('Traze Trip Admin API')
     .setVersion('1.0')
