@@ -8,6 +8,8 @@ import {
   ConflictException,
   Put,
   NotFoundException,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -27,11 +29,14 @@ import {
   updateUserValidationSchema,
   User,
   UserStatuses,
+  updateUserPasswordValidationSchema,
 } from './model/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { hash } from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordUserDto } from './dto/update-password-user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { storage } from 'src/shared/multer.config';
 
 @ApiTags('users')
 @Controller('users')
@@ -75,7 +80,8 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   async update(
     @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body(new JoiValidationPipe(updateUserValidationSchema))
+    updateUserDto: UpdateUserDto,
   ): Promise<User> {
     const user = await this.usersService.find(id);
 
@@ -96,7 +102,7 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   async updatePassword(
     @Param('id') id: string,
-    @Body(new JoiValidationPipe(updateUserValidationSchema))
+    @Body(new JoiValidationPipe(updateUserPasswordValidationSchema))
     updatePasswordUserDto: UpdatePasswordUserDto,
   ): Promise<User> {
     const user = await this.usersService.find(id);
@@ -135,5 +141,44 @@ export class UsersController {
       password: passHash,
       status: UserStatuses.active,
     });
+  }
+
+  @Put(':id/avatar')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiParam({ name: 'id', type: String })
+  @ApiOkResponse({
+    description: 'The record has been successfully updated.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage,
+    }),
+  )
+  async updateAvatar(
+    @Param('id') id: string,
+    @UploadedFile() file: { [index: string]: any },
+  ): Promise<{ path: string }> {
+    const { path } = file;
+
+    await this.usersService.update(id, { avatar: path });
+
+    return {
+      path,
+    };
+  }
+
+  @Get(':id/avatar')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiParam({ name: 'id', type: String })
+  @ApiOkResponse({
+    description: 'The record has been successfully returned.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
+  async getAvatar(@Param('id') id: string): Promise<any> {
+    const { avatar } = await this.usersService.find(id);
+    return avatar;
   }
 }

@@ -1,13 +1,12 @@
 import { Schema } from '@hapi/joi';
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
-
-type genericType = string | number | [] | Record<string, unknown>;
+import { GenericType } from './generic.type';
 
 @Injectable()
 export class JoiValidationPipe implements PipeTransform {
   constructor(private readonly schema: Schema) {}
 
-  transform(value: genericType): genericType {
+  transform(value: GenericType): GenericType {
     const { error } = this.schema.validate(value);
 
     if (error) throw new BadRequestException(error);

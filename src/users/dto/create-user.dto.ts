@@ -9,7 +9,7 @@ export class CreateUserDto {
   firstName?: string;
 
   @ApiPropertyOptional({
-    description: 'LasstName of the user',
+    description: 'LastName of the user',
     type: String,
   })
   lastName?: string;
@@ -30,15 +30,13 @@ export class CreateUserDto {
 
   @ApiPropertyOptional({
     description: 'Status of the user',
-    enum: Object.keys(UserStatuses),
+    enum: Object.values(UserStatuses),
   })
   status?: UserStatuses.active;
-}
 
-export class AdditionalUserData {
   @ApiProperty({
     description: 'URL Avatar for user ',
     type: String,
   })
-  avatar: string;
+  avatar?: string;
 }

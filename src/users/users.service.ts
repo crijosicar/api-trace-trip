@@ -12,8 +12,8 @@ export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const createdCat = new this.userModel(createUserDto);
-    return createdCat.save();
+    const createdUser = new this.userModel(createUserDto);
+    return createdUser.save();
   }
 
   async findAll(): Promise<User[]> {

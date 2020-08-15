@@ -21,7 +21,7 @@ export class User extends Document {
   firstName?: string;
 
   @ApiPropertyOptional({
-    description: 'LasstName of the user',
+    description: 'LastName of the user',
     type: String,
   })
   @Prop({ type: String, trim: true })
@@ -80,6 +80,16 @@ export const createUserValidationSchema = Joi.object({
 }).required();
 
 export const updateUserValidationSchema = Joi.object({
+  firstName: Joi.string()
+    .trim()
+    .min(2),
+  lastName: Joi.string()
+    .trim()
+    .min(2),
+  status: Joi.any().valid(...Object.values(UserStatuses)),
+}).or('firstName', 'lastName', 'status');
+
+export const updateUserPasswordValidationSchema = Joi.object({
   password: Joi.string()
     .regex(new RegExp(passwordPattern))
     .required()
