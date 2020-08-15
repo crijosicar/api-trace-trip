@@ -9,7 +9,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "node dist/main",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -19,7 +19,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "run:prod:pm2": "pm2 start npm -- start"
+    "start:_prod": "NODE_ENV=production rimraf dist && nest build && pm2 start npm --max-memory-restart 500M --name 'API TrazeTrip' -- start"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
