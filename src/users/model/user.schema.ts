@@ -3,6 +3,9 @@ import { Document } from 'mongoose';
 import * as Joi from '@hapi/joi';
 import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
 
+const passwordPattern =
+  '(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[$@$!#.])[A-Za-zd$@$!%*?&.]{8,20}';
+
 export enum UserStatuses {
   active = 'ACTIVE',
   inactive = 'INACTIVE',
@@ -69,5 +72,17 @@ export const createUserValidationSchema = Joi.object({
   lastName: Joi.string()
     .trim()
     .min(2),
-  password: Joi.string().required(),
+  password: Joi.string()
+    .regex(new RegExp(passwordPattern))
+    .required()
+    .min(8)
+    .max(20),
+}).required();
+
+export const updateUserValidationSchema = Joi.object({
+  password: Joi.string()
+    .regex(new RegExp(passwordPattern))
+    .required()
+    .min(8)
+    .max(20),
 }).required();

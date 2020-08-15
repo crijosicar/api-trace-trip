@@ -1,10 +1,5 @@
 import { Schema } from '@hapi/joi';
-import {
-  ArgumentMetadata,
-  BadRequestException,
-  Injectable,
-  PipeTransform,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 
 type genericType = string | number | [] | Record<string, unknown>;
 
@@ -12,7 +7,7 @@ type genericType = string | number | [] | Record<string, unknown>;
 export class JoiValidationPipe implements PipeTransform {
   constructor(private readonly schema: Schema) {}
 
-  transform(value: genericType, _metadata: ArgumentMetadata): genericType {
+  transform(value: genericType): genericType {
     const { error } = this.schema.validate(value);
 
     if (error) throw new BadRequestException(error);

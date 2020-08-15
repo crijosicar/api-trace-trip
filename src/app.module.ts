@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from '@hapi/joi';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
+import { PagesModule } from './pages/pages.module';
+import { connectionConfiguration } from './shared/mongosee.config';
 
 const { DATABASE_CONNECTION } = process.env;
 
@@ -30,12 +32,9 @@ const { DATABASE_CONNECTION } = process.env;
     AuthModule,
     ScheduleModule.forRoot(),
     CacheModule.register(),
-    MongooseModule.forRoot(DATABASE_CONNECTION, {
-      useCreateIndex: true,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }),
+    MongooseModule.forRoot(DATABASE_CONNECTION, connectionConfiguration),
     UsersModule,
+    PagesModule,
   ],
 })
 export class AppModule {}

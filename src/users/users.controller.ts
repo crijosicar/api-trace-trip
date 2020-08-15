@@ -25,12 +25,14 @@ import { UsersService } from './users.service';
 import { JoiValidationPipe } from 'src/shared/joi-validation.pipe';
 import {
   createUserValidationSchema,
+  updateUserValidationSchema,
   User,
   UserStatuses,
 } from './model/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { hash } from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordUserDto } from './dto/update-password-user.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -81,6 +83,31 @@ export class UsersController {
     if (!user) throw new NotFoundException('Data not found');
 
     return this.usersService.update(id, updateUserDto);
+  }
+
+  @Put(':id/password')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiParam({ name: 'id', type: String })
+  @ApiBody({ type: UpdatePasswordUserDto })
+  @ApiOkResponse({
+    description: 'The record has been successfully updated.',
+    type: User,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
+  async updatePassword(
+    @Param('id') id: string,
+    @Body(new JoiValidationPipe(updateUserValidationSchema))
+    updatePasswordUserDto: UpdatePasswordUserDto,
+  ): Promise<User> {
+    const user = await this.usersService.find(id);
+
+    if (!user) throw new NotFoundException('Data not found');
+
+    const { password } = updatePasswordUserDto;
+    const passHash = await hash(password, 10);
+
+    return this.usersService.update(id, { password: passHash });
   }
 
   @Post()
