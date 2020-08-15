@@ -10,7 +10,6 @@ module.exports = {
       watch: false,
       max_memory_restart: '1G',
       log_date_format: 'YYYY-MM-DD HH:mm Z',
-      interpreter: '/home/csierra/.nvm/versions/node/v10.21.0/bin/node',
       env: {
         NODE_ENV: 'development',
         PORT: 3000,
