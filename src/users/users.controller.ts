@@ -113,7 +113,6 @@ export class UsersController {
   @Post()
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
-  @UsePipes(new JoiValidationPipe(createUserValidationSchema))
   @ApiBody({ type: CreateUserDto })
   @ApiCreatedResponse({
     description: 'The record has been successfully created.',
@@ -121,7 +120,10 @@ export class UsersController {
   })
   @ApiConflictResponse({ description: 'Duplicated data.' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  async create(
+    @Body(new JoiValidationPipe(createUserValidationSchema))
+    createUserDto: CreateUserDto,
+  ): Promise<User> {
     const { email, password } = createUserDto;
     const passHash = await hash(password, 10);
 
