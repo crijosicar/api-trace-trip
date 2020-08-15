@@ -2,7 +2,6 @@ import {
   Controller,
   UseGuards,
   Post,
-  UsePipes,
   Body,
   Get,
   Param,
