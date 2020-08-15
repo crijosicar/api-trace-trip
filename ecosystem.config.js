@@ -22,7 +22,7 @@ module.exports = {
   ],
   deploy: {
     staging: {
-      user: 'csierra',
+      user: 'root',
       host: '64.227.61.21',
       ref: 'origin/stage',
       repo: 'git@github.com/api-trace-trip.git',
