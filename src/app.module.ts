@@ -1,20 +1,19 @@
-import { Module } from '@nestjs/common';
+import { Module, CacheModule } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { UsersController } from './users/users.controller';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from '@hapi/joi';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ScheduleModule } from '@nestjs/schedule';
 
 const { DATABASE_CONNECTION } = process.env;
 
 @Module({
+  controllers: [AppController],
   imports: [
-    MongooseModule.forRoot(DATABASE_CONNECTION),
     ConfigModule.forRoot({
+      isGlobal: true,
       validationSchema: Joi.object({
         NODE_ENV: Joi.string()
           .valid('development', 'production', 'test', 'provision')
@@ -29,9 +28,14 @@ const { DATABASE_CONNECTION } = process.env;
       },
     }),
     AuthModule,
+    ScheduleModule.forRoot(),
+    CacheModule.register(),
+    MongooseModule.forRoot(DATABASE_CONNECTION, {
+      useCreateIndex: true,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }),
     UsersModule,
   ],
-  controllers: [AppController, UsersController],
-  providers: [AppService, AuthService],
 })
 export class AppModule {}

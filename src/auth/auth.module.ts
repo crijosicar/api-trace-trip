@@ -7,21 +7,17 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 
-const { JWT_SECRET } = process.env;
-
-console.log('1', JWT_SECRET);
-
 @Module({
   imports: [
     ConfigModule.forRoot(),
     UsersModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: JWT_SECRET,
-      signOptions: { expiresIn: '24h' },
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '8h' },
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [LocalStrategy, JwtStrategy, AuthService],
   exports: [AuthService],
 })
 export class AuthModule {}

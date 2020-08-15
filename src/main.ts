@@ -24,10 +24,9 @@ async function bootstrap() {
   app.use(compression());
 
   const options = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('Traze Trip')
+    .setDescription('Traze Trip Admin API')
     .setVersion('1.0')
-    .addTag('cats')
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
