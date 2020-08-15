@@ -74,9 +74,9 @@ export class PagesController {
     @Body(new JoiValidationPipe(updatePageValidationSchema))
     updatePageDto: UpdatePageDto,
   ): Promise<Page> {
-    const user = await this.pagesService.find(id);
+    const page = await this.pagesService.find(id);
 
-    if (!user) throw new NotFoundException('Data not found');
+    if (!page) throw new NotFoundException('Data not found');
 
     return this.pagesService.update(id, updatePageDto);
   }
