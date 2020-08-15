@@ -14,21 +14,23 @@ module.exports = {
         NODE_ENV: 'development',
         PORT: 3000,
       },
-      env_stating: {
+      env_staging: {
         NODE_ENV: 'production',
         PORT: 3000,
       },
     },
   ],
   deploy: {
-    stating: {
+    staging: {
       user: 'crijosicar',
       host: '64.227.61.21',
       ref: 'origin/stage',
       repo: 'git@github.com/api-trace-trip.git',
       path: '/var/www/api-trace-trip',
-      'post-deploy':
-        'npm install --unsafe-perm && rimraf dist && nest build && pm2 reload ecosystem.config.js --env stating',
+      ssh_options: ['StrictHostKeyChecking=no', 'PasswordAuthentication=no'],
+      'pre-setup': 'rimraf node_modules && rimraf dist',
+      'post-setup': 'npm install --unsafe-perm && nest build',
+      'post-deploy': 'pm2 reload ecosystem.config.js --env staging',
     },
   },
 };
