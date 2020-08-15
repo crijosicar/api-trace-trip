@@ -30,7 +30,7 @@ module.exports = {
       ssh_options: ['StrictHostKeyChecking=no', 'PasswordAuthentication=no'],
       'pre-setup': 'rimraf node_modules && rimraf dist',
       'post-setup': 'npm install --unsafe-perm && nest build',
-      'post-deploy': 'pm2 reload ecosystem.config.js --env staging',
+      'post-deploy': 'pm2 start ecosystem.config.js --env staging',
     },
   },
 };
