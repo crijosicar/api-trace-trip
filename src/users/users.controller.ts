@@ -20,6 +20,7 @@ import {
   ApiConflictResponse,
   ApiBearerAuth,
   ApiUnauthorizedResponse,
+  ApiConsumes,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from './users.service';
@@ -37,6 +38,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordUserDto } from './dto/update-password-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { storage } from 'src/shared/cloudinary.config';
+import { FileUploadDto } from './dto/file-upload.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -152,6 +154,8 @@ export class UsersController {
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   @UseInterceptors(FileInterceptor('avatar', { storage }))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: FileUploadDto, description: 'Avatar for the user' })
   async updateAvatar(
     @Param('id') id: string,
     @UploadedFile() file: { [index: string]: any },
