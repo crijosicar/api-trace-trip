@@ -16,7 +16,7 @@ import { LogInUserDto } from './users/dto/log-in-user.dto';
 export class AppController {
   constructor(private authService: AuthService) {}
 
-  @Get('me')
+  @Get('auth/me')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @ApiOkResponse({
