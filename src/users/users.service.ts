@@ -6,6 +6,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { updateConfiguration } from 'src/shared/mongosee.config';
 import { UpdatePasswordUserDto } from './dto/update-password-user.dto';
+import { UpdateAvatarUserDto } from './dto/update-avatar-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -30,7 +31,7 @@ export class UsersService {
 
   async update(
     id: string,
-    updateUserDto: UpdateUserDto | UpdatePasswordUserDto,
+    updateUserDto: UpdateUserDto | UpdatePasswordUserDto | UpdateAvatarUserDto,
   ): Promise<User> {
     return this.userModel.findOneAndUpdate(
       { _id: id },

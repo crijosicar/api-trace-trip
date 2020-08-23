@@ -11,7 +11,7 @@ export enum UserStatuses {
   inactive = 'INACTIVE',
 }
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, versionKey: false })
 export class User extends Document {
   @ApiPropertyOptional({
     description: 'FirstName of the user',
@@ -49,6 +49,10 @@ export class User extends Document {
   @Prop({ required: true, type: String })
   password: string;
 
+  @ApiPropertyOptional({
+    description: 'Profile picture of the user',
+    type: String,
+  })
   @Prop({ type: String })
   avatar: string;
 
