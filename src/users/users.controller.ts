@@ -39,6 +39,7 @@ import { UpdatePasswordUserDto } from './dto/update-password-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { storage } from 'src/shared/cloudinary.config';
 import { FileUploadDto } from './dto/file-upload.dto';
+import { UpdateAvatarResponseDto } from './dto/avatar-response.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -151,15 +152,16 @@ export class UsersController {
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({
     description: 'The record has been successfully updated.',
+    type: UpdateAvatarResponseDto,
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   @UseInterceptors(FileInterceptor('avatar', { storage }))
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: FileUploadDto, description: 'Avatar for the user' })
+  @ApiBody({ type: FileUploadDto, description: 'Avatar for profile image' })
   async updateAvatar(
     @Param('id') id: string,
     @UploadedFile() file: { [index: string]: any },
-  ): Promise<{ path: string }> {
+  ): Promise<UpdateAvatarResponseDto> {
     const { path } = file;
 
     await this.usersService.update(id, { avatar: path });

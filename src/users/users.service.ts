@@ -18,11 +18,14 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
+    return this.userModel
+      .find()
+      .select({ password: 0 })
+      .exec();
   }
 
   async find(id: string): Promise<User | undefined> {
-    return this.userModel.findById(id);
+    return this.userModel.findById(id).select({ password: 0 });
   }
 
   async findOne(email: string): Promise<User | undefined> {
