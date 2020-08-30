@@ -37,7 +37,7 @@ import { hash } from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordUserDto } from './dto/update-password-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { storage } from 'src/shared/cloudinary.config';
+import { storage, imageFileFilter, maxSize } from 'src/shared/cloudinary.config';
 import { FileUploadDto } from './dto/file-upload.dto';
 import { UpdateAvatarResponseDto } from './dto/avatar-response.dto';
 
@@ -155,7 +155,7 @@ export class UsersController {
     type: UpdateAvatarResponseDto,
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
-  @UseInterceptors(FileInterceptor('avatar', { storage }))
+  @UseInterceptors(FileInterceptor('avatar', { limits: { fileSize: maxSize }, fileFilter: imageFileFilter,  storage: storage('avatars') }))
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: FileUploadDto, description: 'Avatar for profile image' })
   async updateAvatar(
@@ -180,7 +180,10 @@ export class UsersController {
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   async getAvatar(@Param('id') id: string): Promise<any> {
-    const { avatar } = await this.usersService.find(id);
-    return avatar;
+    const user = await this.usersService.find(id);
+
+    if (!user) throw new NotFoundException('Data not found');
+
+    return  user.avatar;
   }
 }

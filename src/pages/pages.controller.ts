@@ -39,7 +39,7 @@ export class PagesController {
   @ApiBearerAuth()
   @ApiOkResponse({
     description: 'The record list has been successfully returned.',
-    type: Page,
+    type: [Page],
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   async findAll(): Promise<Page[]> {
@@ -56,7 +56,29 @@ export class PagesController {
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   async find(@Param('id') id: string): Promise<Page> {
-    return this.pagesService.find(id);
+    const page = this.pagesService.find(id);
+
+    if(!page) throw new NotFoundException('Data not found');
+
+    return page;
+
+  }
+
+  @Get('name/:name')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiParam({ name: 'name', type: String })
+  @ApiOkResponse({
+    description: 'The record has been successfully returned.',
+    type: Page,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
+  async findByName(@Param('name') name: string): Promise<Page> {
+    const page = this.pagesService.findOne(name);
+
+    if(!page) throw new NotFoundException('Data not found');
+
+    return page;
   }
 
   @Put(':id')
