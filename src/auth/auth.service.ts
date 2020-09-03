@@ -15,8 +15,9 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<Partial<User>> {
     const user = await this.usersService.findOne(email);
 
-    if (user && (await compare(password, user.password)))
+    if (user && (await compare(password, user.password))){
       return omit(user, 'password');
+    }
 
     return null;
   }
