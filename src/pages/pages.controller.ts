@@ -8,6 +8,8 @@ import {
   Body,
   NotFoundException,
   ConflictException,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { PagesService } from './pages.service';
 import {
@@ -19,6 +21,7 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiConflictResponse,
+  ApiConsumes,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import {
@@ -29,6 +32,11 @@ import {
 import { JoiValidationPipe } from 'src/shared/joi-validation.pipe';
 import { UpdatePageDto } from './dto/update-page.dto';
 import { CreatePageDto } from './dto/create-page.dto';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { maxSize, imageFileFilter, storage } from 'src/shared/cloudinary.config';
+import { get, find, unionBy } from 'lodash';
+import { v4 } from 'uuid'
+
 @ApiTags('pages')
 @Controller('pages')
 export class PagesController {
@@ -101,6 +109,41 @@ export class PagesController {
     if (!page) throw new NotFoundException('Data not found');
 
     return this.pagesService.update(id, updatePageDto);
+  }
+
+  @Put('name/:name')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiParam({ name: 'name', type: String })
+  @ApiBody({ type: UpdatePageDto })
+  @ApiOkResponse({
+    description: 'The record has been successfully updated.',
+    type: Page,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
+  @UseInterceptors(AnyFilesInterceptor({ limits: { fileSize: maxSize }, fileFilter: imageFileFilter,  storage: storage('pages/home/slider') }))
+  @ApiConsumes('multipart/form-data')
+  async updateByName(
+    @Param('name') name: string,
+    @Body(new JoiValidationPipe(updatePageValidationSchema))
+    updatePageDto: UpdatePageDto,
+    @UploadedFiles() files: Record<string, any>,
+  ): Promise<Page> {
+    const page = await this.pagesService.findOne(name);
+    
+    if (!page) throw new NotFoundException('Data not found');
+
+    const slider = get(updatePageDto, 'additionalFields.slider');
+
+    if(slider){
+      const oldSlider =  get(page, 'additionalFields.slider', []);
+      
+      !slider['id']  && (slider['id'] = v4());
+      slider['image'] = files[0] ? files[0].path : get(find(oldSlider, {id: slider.id}), 'image');
+      updatePageDto.additionalFields.slider = unionBy([slider], oldSlider, 'id')
+    }
+
+    return this.pagesService.update(page.id, updatePageDto);
   }
 
   @Post()

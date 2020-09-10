@@ -160,7 +160,7 @@ export class UsersController {
   @ApiBody({ type: FileUploadDto, description: 'Avatar for profile image' })
   async updateAvatar(
     @Param('id') id: string,
-    @UploadedFile() file: { [index: string]: any },
+    @UploadedFile() file: Record<string, any>,
   ): Promise<UpdateAvatarResponseDto> {
     const { path } = file;
 
