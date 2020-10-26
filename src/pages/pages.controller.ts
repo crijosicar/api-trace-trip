@@ -136,11 +136,11 @@ export class PagesController {
     const slider = get(updatePageDto, 'additionalFields.slider');
 
     if(slider){
-      const oldSlider =  get(page, 'additionalFields.slider', []);
+      const currentSlider =  get(page, 'additionalFields.slider', []);
       
-      !slider['id']  && (slider['id'] = v4());
-      slider['image'] = files[0] ? files[0].path : get(find(oldSlider, {id: slider.id}), 'image');
-      updatePageDto.additionalFields.slider = unionBy([slider], oldSlider, 'id')
+      !slider['id'] && (slider['id'] = v4());
+      slider['image'] = files[0] ? files[0].path : get(find(currentSlider, { id: slider.id }), 'image');
+      updatePageDto.additionalFields.slider = unionBy([slider], currentSlider, 'id')
     }
 
     return this.pagesService.update(page.id, updatePageDto);
