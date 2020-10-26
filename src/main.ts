@@ -1,20 +1,25 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import * as csurf from 'csurf';
 import * as helmet from 'helmet';
 import * as rateLimit from 'express-rate-limit';
 import * as compression from 'compression';
 
-const { PORT } = process.env;
+const { PORT, NODE_ENV } = process.env;
 
-async function bootstrap() {
+const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, {
     cors: true,
     logger: ['error', 'warn'],
   });
   app.setGlobalPrefix('v1');
   app.use(helmet());
-  // app.use(csurf());
+
+  if(NODE_ENV === 'production') {
+    app.use(csurf());
+  }
+  
   app.use(
     rateLimit({
       max: 100, // limit each IP to 100 requests per windowMs
@@ -35,4 +40,5 @@ async function bootstrap() {
   await app.listen(PORT);
   console.log(`App started at port ${PORT}`);
 }
+
 bootstrap();
