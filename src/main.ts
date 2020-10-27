@@ -7,7 +7,6 @@ import * as rateLimit from 'express-rate-limit';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 
-
 const { PORT } = process.env;
 
 const bootstrap = async () => {
@@ -18,7 +17,7 @@ const bootstrap = async () => {
   app.setGlobalPrefix('v1');
   app.use(helmet());
   app.use(cookieParser());
-  // app.use(csurf({ cookie: true }));
+  app.use(csurf({ cookie: true }));
   
   app.use(
     rateLimit({
