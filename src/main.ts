@@ -5,8 +5,10 @@ import * as csurf from 'csurf';
 import * as helmet from 'helmet';
 import * as rateLimit from 'express-rate-limit';
 import * as compression from 'compression';
+import * as cookieParser from 'cookie-parser';
 
-const { PORT, NODE_ENV } = process.env;
+
+const { PORT } = process.env;
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, {
@@ -15,10 +17,8 @@ const bootstrap = async () => {
   });
   app.setGlobalPrefix('v1');
   app.use(helmet());
-
-  if(NODE_ENV === 'production') {
-    app.use(csurf());
-  }
+  app.use(cookieParser());
+  // app.use(csurf({ cookie: true }));
   
   app.use(
     rateLimit({
