@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import * as csurf from 'csurf';
+// import * as csurf from 'csurf';
 import * as helmet from 'helmet';
 import * as rateLimit from 'express-rate-limit';
 import * as compression from 'compression';
@@ -17,7 +17,7 @@ const bootstrap = async () => {
   app.setGlobalPrefix('v1');
   app.use(helmet());
   app.use(cookieParser());
-  app.use(csurf({ cookie: true }));
+  // app.use(csurf({ cookie: true }));
   
   app.use(
     rateLimit({

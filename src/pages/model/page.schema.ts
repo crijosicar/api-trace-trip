@@ -14,7 +14,7 @@ export class Page extends Document {
   name: string;
 
   @ApiPropertyOptional({
-    description: 'Generic values for the page',
+    description: 'Dynamic values for the page',
   })
   @Prop()
   additionalFields?: Record<string, unknown>;

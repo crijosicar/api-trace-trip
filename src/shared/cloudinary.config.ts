@@ -1,19 +1,17 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
-
-
-export const storage = (folder?: string): CloudinaryStorage =>  {
+export const storage = (params = {}): CloudinaryStorage => {
   return new CloudinaryStorage({
     cloudinary,
-    params: {
-      ...(folder ? {folder} : {})
-    },
+    params,
   })
 };
 
 export const imageFileFilter = (req, file, callback): void => {
-  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) return callback(new Error('Only image files are allowed!'), false);
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+    return callback(new Error('Only image files are allowed!'), false);
+  }
   
   callback(null, true);
 };

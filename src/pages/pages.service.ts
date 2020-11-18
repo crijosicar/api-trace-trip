@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { updateConfiguration } from 'src/shared/mongosee.config';
 import { CreatePageDto } from './dto/create-page.dto';
 import { UpdatePageDto } from './dto/update-page.dto';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class PagesService {
@@ -12,6 +13,7 @@ export class PagesService {
 
   async create(createPageDto: CreatePageDto): Promise<Page> {
     const createdPage = new this.pageModel(createPageDto);
+    
     return createdPage.save();
   }
 
@@ -23,13 +25,13 @@ export class PagesService {
     return this.pageModel.findById(id);
   }
 
-  async findOne(name: string): Promise<Page | undefined> {
+  async findByName(name: string): Promise<Page | undefined> {
     return this.pageModel.findOne({ name });
   }
 
   async update(id: string, updatePageDto: UpdatePageDto): Promise<Page> {
     return this.pageModel.findOneAndUpdate(
-      { _id: id },
+      { _id: new ObjectId(id) },
       updatePageDto,
       updateConfiguration,
     );

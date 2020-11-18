@@ -7,6 +7,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { updateConfiguration } from 'src/shared/mongosee.config';
 import { UpdatePasswordUserDto } from './dto/update-password-user.dto';
 import { UpdateAvatarUserDto } from './dto/update-avatar-user.dto';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class UsersService {
@@ -37,7 +38,7 @@ export class UsersService {
     updateUserDto: UpdateUserDto | UpdatePasswordUserDto | UpdateAvatarUserDto,
   ): Promise<User> {
     return this.userModel.findOneAndUpdate(
-      { _id: id },
+      { _id: new ObjectId(id) },
       updateUserDto,
       updateConfiguration,
     );

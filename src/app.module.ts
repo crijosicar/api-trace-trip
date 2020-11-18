@@ -9,6 +9,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { PagesModule } from './pages/pages.module';
 import { connectionConfiguration } from './shared/mongosee.config';
 import { v2 as cloudinary } from 'cloudinary';
+import { FilesModule } from './files/files.module';
 
 const {
   DATABASE_CONNECTION,
@@ -49,6 +50,7 @@ cloudinary.config({
     MongooseModule.forRoot(DATABASE_CONNECTION, connectionConfiguration),
     UsersModule,
     PagesModule,
+    FilesModule,
   ],
 })
 export class AppModule {}

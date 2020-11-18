@@ -8,8 +8,6 @@ import {
   Body,
   NotFoundException,
   ConflictException,
-  UseInterceptors,
-  UploadedFiles,
 } from '@nestjs/common';
 import { PagesService } from './pages.service';
 import {
@@ -21,7 +19,6 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiConflictResponse,
-  ApiConsumes,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import {
@@ -32,10 +29,6 @@ import {
 import { JoiValidationPipe } from 'src/shared/joi-validation.pipe';
 import { UpdatePageDto } from './dto/update-page.dto';
 import { CreatePageDto } from './dto/create-page.dto';
-import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { maxSize, imageFileFilter, storage } from 'src/shared/cloudinary.config';
-import { get, find, unionBy } from 'lodash';
-import { v4 } from 'uuid'
 
 @ApiTags('pages')
 @Controller('pages')
@@ -69,7 +62,6 @@ export class PagesController {
     if(!page) throw new NotFoundException('Data not found');
 
     return page;
-
   }
 
   @Get('name/:name')
@@ -82,7 +74,7 @@ export class PagesController {
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   async findByName(@Param('name') name: string): Promise<Page> {
-    const page = this.pagesService.findOne(name);
+    const page = this.pagesService.findByName(name);
 
     if(!page) throw new NotFoundException('Data not found');
 
@@ -121,29 +113,16 @@ export class PagesController {
     type: Page,
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
-  @UseInterceptors(AnyFilesInterceptor({ limits: { fileSize: maxSize }, fileFilter: imageFileFilter,  storage: storage('pages/home/slider') }))
-  @ApiConsumes('multipart/form-data')
   async updateByName(
     @Param('name') name: string,
     @Body(new JoiValidationPipe(updatePageValidationSchema))
     updatePageDto: UpdatePageDto,
-    @UploadedFiles() files: Record<string, any>,
   ): Promise<Page> {
-    const page = await this.pagesService.findOne(name);
+    const page = await this.pagesService.findByName(name);
     
     if (!page) throw new NotFoundException('Data not found');
 
-    const slider = get(updatePageDto, 'additionalFields.slider');
-
-    if(slider){
-      const currentSlider =  get(page, 'additionalFields.slider', []);
-      
-      !slider['id'] && (slider['id'] = v4());
-      slider['image'] = files[0] ? files[0].path : get(find(currentSlider, { id: slider.id }), 'image');
-      updatePageDto.additionalFields.slider = unionBy([slider], currentSlider, 'id')
-    }
-
-    return this.pagesService.update(page.id, updatePageDto);
+    return this.pagesService.update(page._id, updatePageDto);
   }
 
   @Post()
@@ -160,9 +139,7 @@ export class PagesController {
     @Body(new JoiValidationPipe(createPageValidationSchema))
     createPageDto: CreatePageDto,
   ): Promise<Page> {
-    const { name } = createPageDto;
-
-    const page = await this.pagesService.findOne(name);
+    const page = await this.pagesService.findByName(createPageDto.name);
 
     if (page) throw new ConflictException('Duplicated data');
 
